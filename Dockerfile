@@ -1,6 +1,5 @@
 # Étape 1 : Utilisez l'image officielle Flutter pour construire
-FROM ghcr.io/cirruslabs/flutter:3.22.4 AS build
-
+FROM ghcr.io/cirruslabs/flutter:3.38.9 AS build
 WORKDIR /app
 COPY . .
 
