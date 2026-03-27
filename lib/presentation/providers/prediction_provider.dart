@@ -36,7 +36,8 @@ class PredictionProvider extends ChangeNotifier {
         _studentData.imp10 = _parseDouble(value);
         break;
       case 'Ran_TbB':
-        _studentData.ranTbB = _parseDouble(value);
+        // CORRECTION: Utiliser _parseInt au lieu de _parseDouble
+        _studentData.ranTbB = _parseInt(value);
         break;
       case 'cour_supl':
         _studentData.courSupl = _parseDouble(value);
@@ -124,7 +125,8 @@ class PredictionProvider extends ChangeNotifier {
       imp5: _parseDouble(data['imp5']),
       imp6: _parseDouble(data['imp6']),
       imp10: _parseDouble(data['imp10']),
-      ranTbB: _parseDouble(data['Ran_TbB']),
+      // CORRECTION: Utiliser _parseInt au lieu de _parseDouble
+      ranTbB: _parseInt(data['Ran_TbB']),
       courSupl: _parseDouble(data['cour_supl']),
       elevPresco: _parseDouble(data['elev_presco']),
       nbreElevSDC: _parseDouble(data['nbre_elev_SDC']),
@@ -157,6 +159,15 @@ class PredictionProvider extends ChangeNotifier {
       final encoded = _studentData.etabPrimStatEncoded;
       if (encoded == null || (encoded != 0 && encoded != 1)) {
         _errorMessage = 'Statut d\'établissement invalide. Valeurs acceptées: 0 (Privé) ou 1 (Public)';
+        notifyListeners();
+        return false;
+      }
+    }
+
+    // Validation spécifique pour ranTbB
+    if (_studentData.ranTbB != null) {
+      if (!RangPosition.valuesList.contains(_studentData.ranTbB)) {
+        _errorMessage = 'Position dans la salle invalide. Valeurs acceptées: 1 (Devant), 2 (Milieu), 3 (Fond)';
         notifyListeners();
         return false;
       }
@@ -198,6 +209,37 @@ class PredictionProvider extends ChangeNotifier {
     return null;
   }
 
+  // AJOUT: Méthode pour parser les entiers (pour ranTbB)
+  int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      try {
+        final cleaned = value.trim();
+        if (cleaned.isEmpty) return null;
+        final parsed = int.tryParse(cleaned);
+        
+        // Si la valeur est 1, 2 ou 3, elle est valide
+        if (parsed != null && [1, 2, 3].contains(parsed)) {
+          return parsed;
+        }
+        
+        // Tentative de conversion à partir du label
+        if (cleaned.toLowerCase() == 'devant') return 1;
+        if (cleaned.toLowerCase() == 'milieu') return 2;
+        if (cleaned.toLowerCase() == 'fond') return 3;
+        
+        return null;
+      } catch (e) {
+        print('Erreur de parsing int: $e pour "$value"');
+        return null;
+      }
+    }
+    return null;
+  }
+
   String? _parseString(dynamic value) {
     if (value == null) return null;
     if (value is String) return value.isNotEmpty ? value : null;
@@ -223,6 +265,7 @@ class PredictionProvider extends ChangeNotifier {
   // Méthodes utilitaires pour l'UI
   List<String> get mereNivAcOptions => StudentModel.mereNivAcOptions;
   List<String> get etabPrimStatOptions => StudentModel.etabPrimStatOptions;
+  List<String> get ranTbBOptions => RangPosition.labels;
 
   Map<String, String> get mereNivAcOptionsWithEncoding {
     final result = <String, String>{};
@@ -242,6 +285,15 @@ class PredictionProvider extends ChangeNotifier {
     return result;
   }
 
+  Map<String, String> get ranTbBOptionsWithEncoding {
+    final result = <String, String>{};
+    for (final label in RangPosition.labels) {
+      final encoded = RangPosition.getValueFromLabel(label);
+      result[label] = '→ $encoded';
+    }
+    return result;
+  }
+
   // Obtenir les données prêtes pour l'API (pour débogage)
   Map<String, dynamic> getDataForApi() {
     final data = _studentData.toJson();
@@ -257,9 +309,21 @@ class PredictionProvider extends ChangeNotifier {
     print('\nVariables catégorielles encodées:');
     print('  mere_niv_ac: ${_studentData.mereNivAc} → ${_studentData.mereNivAcEncoded}');
     print('  etab_prim_stat: ${_studentData.etabPrimStat} → ${_studentData.etabPrimStatEncoded}');
+    print('  Ran_TbB: ${_studentData.ranTbB} → ${_studentData.ranTbBLabel}');
     print('===============================');
     
     return data;
+  }
+
+  // Méthode spécifique pour mettre à jour ranTbB avec un label
+  void updateRanTbBByLabel(String label) {
+    _studentData.setRanTbBByLabel(label);
+    notifyListeners();
+  }
+
+  // Méthode pour obtenir le label actuel de ranTbB
+  String getCurrentRanTbBLabel() {
+    return _studentData.ranTbBLabel;
   }
 
   // Réinitialiser le formulaire
@@ -316,6 +380,20 @@ class PredictionProvider extends ChangeNotifier {
       final encoded = _studentData.etabPrimStatEncoded;
       print('etab_prim_stat: "$text" → $encoded (attendu: $expected)');
       assert(encoded == expected);
+    });
+    
+    // Test Ran_TbB
+    final testCasesRanTbB = {
+      'Devant': 1,
+      'Milieu': 2,
+      'Fond': 3,
+    };
+    
+    testCasesRanTbB.forEach((label, expected) {
+      _studentData.setRanTbBByLabel(label);
+      final value = _studentData.ranTbB;
+      print('Ran_TbB: "$label" → $value (attendu: $expected)');
+      assert(value == expected);
     });
     
     print('=== TEST RÉUSSI ===');

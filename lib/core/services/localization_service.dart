@@ -63,8 +63,8 @@ class LocalizationService {
     'confidence': 'Confiance',
     'required_field': 'Ce champ est requis',
     'invalid_value': 'Valeur invalide',
-    'api_connected': 'API Connectée',
-    'api_disconnected': 'API Déconnectée',
+    'api_connected': 'Connectée',
+    'api_disconnected': 'Non connectée',
     'checking_connection': 'Vérification de la connexion...',
   };
   
@@ -88,8 +88,8 @@ class LocalizationService {
     'confidence': 'Confidence',
     'required_field': 'This field is required',
     'invalid_value': 'Invalid value',
-    'api_connected': 'API Connected',
-    'api_disconnected': 'API Disconnected',
+    'api_connected': 'Connecte',
+    'api_disconnected': 'No connecte',
     'checking_connection': 'Checking connection...',
   };
 }
