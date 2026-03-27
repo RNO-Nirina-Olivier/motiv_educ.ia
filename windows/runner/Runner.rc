@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "motiv_educ" "\0"
+            VALUE "CompanyName", "ORIEX" "\0"
+            VALUE "FileDescription", "ORIEX" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "motiv_educ" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "motiv_educ.exe" "\0"
-            VALUE "ProductName", "motiv_educ" "\0"
+            VALUE "InternalName", "ORIEX" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 ORIEX. All rights reserved." "\0"
+            VALUE "OriginalFilename", "ORIEX.exe" "\0"
+            VALUE "ProductName", "ORIEX" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

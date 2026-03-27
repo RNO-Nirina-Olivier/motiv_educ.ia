@@ -88,8 +88,8 @@ class LocalizationService {
     'confidence': 'Confidence',
     'required_field': 'This field is required',
     'invalid_value': 'Invalid value',
-    'api_connected': 'Connecte',
-    'api_disconnected': 'No connecte',
+    'api_connected': 'Connected',
+    'api_disconnected': 'Not connected',
     'checking_connection': 'Checking connection...',
   };
 }
